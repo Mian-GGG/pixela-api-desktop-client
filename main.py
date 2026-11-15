@@ -167,7 +167,7 @@ class Pixela:
     def create_user(self):
         user_create_api = f"{self.PIXELA_API_LINK}v1/users"
         pixela_token = self.token_entry.get()
-        pixela_username = self.username_entry.get()
+        pixela_username = self.username_entry.get().lower()
         if len(pixela_username) != 0 and len(pixela_token) != 0:
             create_user_parameters = {
                 "token": pixela_token,
@@ -184,16 +184,20 @@ class Pixela:
                     }
                 }
 
-                if not self.is_new_file:
+                try:
                     with open("users.json", "r") as old_file:
-                        self.users_dic = json.load(old_file)
-                        self.users_dic.update(data_to_save)
-                    with open("users.json", "w") as updated_file:
-                        json.dump(self.users_dic, updated_file, indent=4)
-                else:
-                    with open("users.json", "w") as new_file_created:
-                        json.dump(data_to_save, new_file_created, indent=4)
-                    self.is_new_file = False
+                        file_content = old_file.read().strip()
+                        self.users_dic = json.loads(file_content) if file_content else {}
+
+                except FileNotFoundError:
+                    self.users_dic = {}
+
+                self.users_dic.update(data_to_save)
+
+                with open("users.json", "w") as updated_file:
+                    json.dump(self.users_dic, updated_file, indent=4)
+
+                self.update_usernames()
 
                 self.update_usernames()
         else:
@@ -218,7 +222,7 @@ class Pixela:
         try:
             dict_data = get_data()
             graph_unit = self.unit_entry.get()
-            graph_id = self.graph_name_entry.get()
+            graph_id = self.graph_name_entry.get().lower()
             username = self.username_dropdown.get()
             api_link = f"{self.PIXELA_API_LINK}v1/users/{username}/graphs"
             header = {
@@ -297,13 +301,24 @@ def get_data() -> dict:
 
 def check_response(response, task, action):
     if not response.ok:
-        response.raise_for_status()
-        messagebox.showerror(message=f"Some error occurred while performing, please check your internet"
-                                     "connection and try again.", title="Error")
+        if response.status_code == 409:
+            messagebox.showerror(
+                message="This username already exists. Please choose another one.",
+                title="Conflict"
+            )
+        else:
+            messagebox.showerror(
+                message=f"An error occurred: {response.text}",
+                title="Error"
+            )
+
         return False
-    else:
-        messagebox.showinfo(message=f"{task} successfully {action}!", title="Successful!")
-        return True
+
+    messagebox.showinfo(
+        message=f"{task} successfully {action}!",
+        title="Successful!"
+    )
+    return True
 
 
 window = Pixela()
