@@ -90,3 +90,10 @@ Some areas that could be improved in a future iteration include:
 
 - [Pixela](https://pixe.la/) for providing the habit-tracking API.
 - [CustomTkinter](https://customtkinter.tomschimansky.com/) for the modern Tkinter-based UI toolkit.
+
+## Some Visuals
+<img width="735" height="813" alt="image" src="https://github.com/user-attachments/assets/e1a52d36-7d0f-42c5-b37b-5d100d947b54" />
+<img width="730" height="799" alt="image" src="https://github.com/user-attachments/assets/c25e9835-15d9-4fac-ad6a-94b56f6852b9" />
+<img width="733" height="808" alt="image" src="https://github.com/user-attachments/assets/e6dbf6b7-8809-4f08-a126-f15aee31170e" />
+
+
